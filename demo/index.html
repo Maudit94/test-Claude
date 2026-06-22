@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f0f13;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.25rem;
+      background: linear-gradient(135deg, #818cf8, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle { color: #64748b; font-size: 0.85rem; margin-bottom: 2rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: #1e1e2e;
+      border: 1px solid #2a2a3d;
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .card h2 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+
+    /* STATS */
+    .stats { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .stat { flex: 1; min-width: 80px; }
+    .stat .value { font-size: 2rem; font-weight: 700; line-height: 1; }
+    .stat .label { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+    .stat.blue .value  { color: #60a5fa; }
+    .stat.green .value { color: #34d399; }
+    .stat.pink .value  { color: #f472b6; }
+
+    /* TASK LIST */
+    #task-input {
+      width: 100%;
+      background: #12121c;
+      border: 1px solid #2a2a3d;
+      border-radius: 8px;
+      color: #e2e8f0;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.875rem;
+      outline: none;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.2s;
+    }
+    #task-input:focus { border-color: #818cf8; }
+
+    #task-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    #task-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.6rem;
+      background: #12121c;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    #task-list li.done { opacity: 0.4; text-decoration: line-through; }
+    #task-list li .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #818cf8;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    #task-list li.done .dot { background: #34d399; }
+
+    /* BAR CHART */
+    .bars { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
+    .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.8s cubic-bezier(.23,1,.32,1);
+    }
+    .bar-label { font-size: 0.65rem; color: #64748b; }
+
+    /* CLOCK */
+    .clock-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    #clock { font-size: 3rem; font-weight: 700; letter-spacing: -2px; color: #f1f5f9; font-variant-numeric: tabular-nums; }
+    #date  { font-size: 0.8rem; color: #64748b; }
+
+    /* PROGRESS */
+    .progress-list { display: flex; flex-direction: column; gap: 0.9rem; }
+    .prog-item label { font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 0.3rem; }
+    .prog-item label span { color: #64748b; }
+    .track { background: #12121c; border-radius: 999px; height: 6px; overflow: hidden; }
+    .fill { height: 100%; border-radius: 999px; transition: width 1s cubic-bezier(.23,1,.32,1); }
+
+    /* NOTE WIDGET */
+    #note {
+      width: 100%; height: 90px;
+      background: #12121c;
+      border: 1px solid #2a2a3d;
+      border-radius: 8px;
+      color: #e2e8f0;
+      padding: 0.65rem 0.75rem;
+      font-size: 0.85rem;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    #note:focus { border-color: #38bdf8; }
+    .note-footer { font-size: 0.7rem; color: #64748b; margin-top: 0.4rem; text-align: right; }
+  </style>
+</head>
+<body>
+
+<h1>Dashboard Demo</h1>
+<p class="subtitle">Creata da Claude — tutto interattivo, zero dipendenze esterne</p>
+
+<div class="grid">
+
+  <!-- STATS -->
+  <div class="card">
+    <h2>Statistiche rapide</h2>
+    <div class="stats">
+      <div class="stat blue">
+        <div class="value" id="s-commits">0</div>
+        <div class="label">Commit</div>
+      </div>
+      <div class="stat green">
+        <div class="value" id="s-issues">0</div>
+        <div class="label">Issue chiuse</div>
+      </div>
+      <div class="stat pink">
+        <div class="value" id="s-prs">0</div>
+        <div class="label">PR mergate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOCK -->
+  <div class="card">
+    <h2>Ora locale</h2>
+    <div class="clock-wrap">
+      <div id="clock">--:--:--</div>
+      <div id="date"></div>
+    </div>
+  </div>
+
+  <!-- TASK LIST -->
+  <div class="card" style="grid-row: span 2;">
+    <h2>Task list</h2>
+    <input id="task-input" type="text" placeholder="Aggiungi un task (Invio)..." />
+    <ul id="task-list"></ul>
+  </div>
+
+  <!-- BAR CHART -->
+  <div class="card">
+    <h2>Attività settimanale</h2>
+    <div class="bars" id="chart"></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="card">
+    <h2>Avanzamento progetto</h2>
+    <div class="progress-list" id="progress"></div>
+  </div>
+
+  <!-- NOTE -->
+  <div class="card">
+    <h2>Note veloci</h2>
+    <textarea id="note" placeholder="Scrivi qui..."></textarea>
+    <div class="note-footer" id="note-chars">0 caratteri</div>
+  </div>
+
+</div>
+
+<script>
+  // --- CLOCK ---
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
+    document.getElementById('date').textContent = now.toLocaleDateString('it-IT', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // --- STATS COUNTER ANIMATION ---
+  function animCount(id, target) {
+    let v = 0, step = Math.ceil(target / 40);
+    const el = document.getElementById(id);
+    const t = setInterval(() => {
+      v = Math.min(v + step, target);
+      el.textContent = v;
+      if (v >= target) clearInterval(t);
+    }, 30);
+  }
+  animCount('s-commits', 142);
+  animCount('s-issues',  38);
+  animCount('s-prs',     17);
+
+  // --- BAR CHART ---
+  const days = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+  const values = [60, 85, 45, 90, 70, 30, 55];
+  const colors = ['#818cf8','#60a5fa','#34d399','#818cf8','#f472b6','#fb923c','#38bdf8'];
+  const chart = document.getElementById('chart');
+  values.forEach((v, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'bar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.background = colors[i];
+    bar.style.height = '0%';
+    const lbl = document.createElement('div');
+    lbl.className = 'bar-label';
+    lbl.textContent = days[i];
+    wrap.appendChild(bar);
+    wrap.appendChild(lbl);
+    chart.appendChild(wrap);
+    setTimeout(() => bar.style.height = v + '%', 100 + i * 80);
+  });
+
+  // --- PROGRESS ---
+  const progs = [
+    { label: 'Frontend', pct: 78, color: '#818cf8' },
+    { label: 'Backend',  pct: 55, color: '#38bdf8' },
+    { label: 'Testing',  pct: 32, color: '#f472b6' },
+    { label: 'Deploy',   pct: 10, color: '#34d399' },
+  ];
+  const pList = document.getElementById('progress');
+  progs.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'prog-item';
+    div.innerHTML = `<label>${p.label}<span>${p.pct}%</span></label>
+      <div class="track"><div class="fill" style="width:0;background:${p.color}" data-w="${p.pct}"></div></div>`;
+    pList.appendChild(div);
+    setTimeout(() => div.querySelector('.fill').style.width = p.pct + '%', 200);
+  });
+
+  // --- TASK LIST ---
+  const defaultTasks = ['Revisionare il codice', 'Scrivere i test', 'Fare il deploy'];
+  const taskList = document.getElementById('task-list');
+
+  function addTask(text) {
+    if (!text.trim()) return;
+    const li = document.createElement('li');
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    li.appendChild(dot);
+    li.appendChild(document.createTextNode(text));
+    li.addEventListener('click', () => li.classList.toggle('done'));
+    taskList.appendChild(li);
+  }
+
+  defaultTasks.forEach(addTask);
+
+  document.getElementById('task-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      addTask(e.target.value);
+      e.target.value = '';
+    }
+  });
+
+  // --- NOTE CHARS ---
+  const note = document.getElementById('note');
+  const noteChars = document.getElementById('note-chars');
+  note.addEventListener('input', () => {
+    noteChars.textContent = note.value.length + ' caratteri';
+  });
+</script>
+</body>
+</html>
