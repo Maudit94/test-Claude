@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VOLTA — La bibita elettrica</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+:root {
+  --yellow: #FFE500;
+  --black:  #0A0A0A;
+  --white:  #FAFAFA;
+  --gray:   #1A1A1A;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--black);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.4rem 3rem;
+  backdrop-filter: blur(20px);
+  background: rgba(10,10,10,0.6);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; color: var(--yellow); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.875rem; letter-spacing: 0.5px; transition: color .2s; }
+.nav-links a:hover { color: var(--white); }
+.nav-cta {
+  background: var(--yellow); color: var(--black);
+  border: none; padding: 0.6rem 1.4rem; border-radius: 999px;
+  font-weight: 700; font-size: 0.875rem; cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.nav-cta:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,229,0,0.4); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 8rem 3rem 4rem;
+  position: relative; overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(255,229,0,0.08) 0%, transparent 70%);
+}
+
+.hero-content { position: relative; z-index: 1; }
+
+.hero-tag {
+  display: inline-block;
+  background: rgba(255,229,0,0.12); color: var(--yellow);
+  border: 1px solid rgba(255,229,0,0.3);
+  padding: 0.35rem 1rem; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -3px;
+  margin-bottom: 1.5rem;
+}
+
+h1 span { color: var(--yellow); }
+
+.hero-sub {
+  font-size: 1.1rem; color: rgba(255,255,255,0.5);
+  line-height: 1.6; max-width: 420px; margin-bottom: 2.5rem;
+}
+
+.hero-btns { display: flex; gap: 1rem; align-items: center; }
+
+.btn-primary {
+  background: var(--yellow); color: var(--black);
+  border: none; padding: 1rem 2rem; border-radius: 999px;
+  font-weight: 700; font-size: 1rem; cursor: pointer;
+  transition: transform .15s, box-shadow .2s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(255,229,0,0.5); }
+
+.btn-ghost {
+  background: transparent; color: var(--white);
+  border: 1px solid rgba(255,255,255,0.2); padding: 1rem 2rem; border-radius: 999px;
+  font-size: 1rem; cursor: pointer; transition: border-color .2s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.6); }
+
+/* CAN */
+.hero-can {
+  position: relative; z-index: 1;
+  display: flex; justify-content: center; align-items: center;
+}
+
+.can-wrap {
+  position: relative;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-20px) rotate(-3deg); }
+}
+
+.can {
+  width: 180px; height: 340px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 30%, #FFE500 50%, #e6ce00 60%, #1a1a1a 100%);
+  position: relative; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(255,229,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.can::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(105deg, rgba(255,255,255,0.15) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
+}
+
+.can-label {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  text-align: center;
+}
+.can-name {
+  font-size: 2.8rem; font-weight: 900; color: var(--black);
+  letter-spacing: -2px; line-height: 1;
+}
+.can-sub { font-size: 0.55rem; color: rgba(0,0,0,0.5); letter-spacing: 3px; text-transform: uppercase; }
+
+.can-shine {
+  position: absolute; top: 0; left: 20%;
+  width: 30%; height: 100%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  border-radius: 0 0 20px 20px;
+}
+
+/* Glow sotto la lattina */
+.can-glow {
+  position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
+  width: 160px; height: 40px;
+  background: radial-gradient(ellipse, rgba(255,229,0,0.35) 0%, transparent 70%);
+  filter: blur(10px);
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Bolle */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,229,0,0.15);
+  animation: rise linear infinite;
+}
+@keyframes rise {
+  0%   { transform: translateY(0) scale(1); opacity: .6; }
+  100% { transform: translateY(-120px) scale(1.4); opacity: 0; }
+}
+
+/* ── STATS ── */
+.stats {
+  background: var(--gray); padding: 3rem;
+  display: flex; justify-content: center; gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.stat {
+  flex: 1; max-width: 200px; text-align: center;
+  padding: 0 2rem;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.stat:last-child { border-right: none; }
+.stat-num { font-size: 2.5rem; font-weight: 900; color: var(--yellow); letter-spacing: -2px; }
+.stat-lbl { font-size: 0.75rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.25rem; }
+
+/* ── FEATURES ── */
+.features { padding: 7rem 3rem; }
+.section-label {
+  text-align: center; color: var(--yellow);
+  font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.section-title {
+  text-align: center; font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900; letter-spacing: -2px; margin-bottom: 4rem;
+}
+
+.feat-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem; max-width: 1000px; margin: 0 auto;
+}
+
+.feat-card {
+  background: var(--gray); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px; padding: 2rem;
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+.feat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,229,0,0.3);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.feat-icon { font-size: 2rem; margin-bottom: 1rem; }
+.feat-title { font-weight: 700; margin-bottom: 0.5rem; }
+.feat-desc { font-size: 0.875rem; color: rgba(255,255,255,0.4); line-height: 1.6; }
+
+/* ── GUSTI ── */
+.flavors { padding: 7rem 3rem; background: var(--gray); }
+.flavor-grid {
+  display: flex; gap: 1.5rem; justify-content: center;
+  flex-wrap: wrap; margin-top: 3rem;
+}
+.flavor-card {
+  width: 200px; border-radius: 20px; padding: 2rem 1.5rem;
+  text-align: center; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform .2s, box-shadow .2s;
+}
+.flavor-card:hover { transform: scale(1.05); }
+.flavor-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
+.flavor-name { font-weight: 700; font-size: 1rem; }
+.flavor-sub  { font-size: 0.75rem; opacity: 0.5; margin-top: 0.25rem; }
+
+/* ── CTA ── */
+.cta-section {
+  padding: 8rem 3rem; text-align: center;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255,229,0,0.07) 0%, transparent 70%);
+}
+.cta-section h2 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900; letter-spacing: -2px; margin-bottom: 1rem;
+}
+.cta-section p { color: rgba(255,255,255,0.4); font-size: 1.1rem; margin-bottom: 2.5rem; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 2rem 3rem;
+  display: flex; justify-content: space-between; align-items: center;
+  color: rgba(255,255,255,0.2); font-size: 0.8rem;
+}
+.footer-logo { font-weight: 900; color: var(--yellow); font-size: 1.1rem; }
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  .hero { grid-template-columns: 1fr; text-align: center; }
+  .hero-can { margin-top: 3rem; }
+  .hero-sub { margin: 0 auto 2.5rem; }
+  .hero-btns { justify-content: center; }
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .feat-grid { grid-template-columns: 1fr; }
+  .stats { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">VOLTA</div>
+  <ul class="nav-links">
+    <li><a href="#features">Ingredienti</a></li>
+    <li><a href="#flavors">Gusti</a></li>
+    <li><a href="#cta">Dove comprarla</a></li>
+  </ul>
+  <button class="nav-cta">Ordina ora →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-tag">⚡ Nuova formula 2025</div>
+    <h1>La bibita<br/>che ti <span>carica</span>.</h1>
+    <p class="hero-sub">VOLTA non è una bibita normale. È energia pura in forma liquida — naturale, intensa, senza compromessi.</p>
+    <div class="hero-btns">
+      <button class="btn-primary">Prova VOLTA →</button>
+      <button class="btn-ghost">Scopri di più</button>
+    </div>
+  </div>
+
+  <div class="hero-can">
+    <div class="can-wrap">
+      <div class="can">
+        <div class="can-shine"></div>
+        <div class="can-label">
+          <div class="can-name">VOLTA</div>
+          <div class="can-sub">electric drink</div>
+        </div>
+      </div>
+      <!-- Bolle animate -->
+      <div class="bubble" style="width:8px;height:8px;left:60px;bottom:80px;animation-duration:2.1s;animation-delay:0s;"></div>
+      <div class="bubble" style="width:5px;height:5px;left:100px;bottom:60px;animation-duration:1.8s;animation-delay:.4s;"></div>
+      <div class="bubble" style="width:10px;height:10px;left:40px;bottom:100px;animation-duration:2.5s;animation-delay:.8s;"></div>
+      <div class="bubble" style="width:6px;height:6px;left:120px;bottom:90px;animation-duration:2s;animation-delay:1.2s;"></div>
+      <div class="bubble" style="width:4px;height:4px;left:80px;bottom:50px;animation-duration:1.6s;animation-delay:.2s;"></div>
+    </div>
+    <div class="can-glow"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat reveal">
+    <div class="stat-num" data-target="0">0</div>
+    <div class="stat-lbl">Calorie</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="100">0</div>
+    <div class="stat-lbl">% Naturale</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="5">0</div>
+    <div class="stat-lbl">Gusti disponibili</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="2">0</div>
+    <div class="stat-lbl">Anni di R&D</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <p class="section-label">Ingredienti</p>
+  <h2 class="section-title">Cosa c'è dentro?</h2>
+  <div class="feat-grid">
+    <div class="feat-card reveal">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Caffeina naturale</div>
+      <div class="feat-desc">Estratta dalla pianta di guaranà. Energia pulita, senza picchi e senza crash.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">🌿</div>
+      <div class="feat-title">Zero zuccheri</div>
+      <div class="feat-desc">Dolcificata con stevia pura. Tutta la dolcezza, nessun senso di colpa.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">💧</div>
+      <div class="feat-title">Acqua di sorgente</div>
+      <div class="feat-desc">Selezioniamo solo sorgenti alpine certificate. La base fa la differenza.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">🧬</div>
+      <div class="feat-title">Vitamine B6 & B12</div>
+      <div class="feat-desc">Per il metabolismo energetico e la riduzione della stanchezza mentale.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">🫧</div>
+      <div class="feat-title">Effervescenza fine</div>
+      <div class="feat-desc">Gasatura a pressione controllata. Bollicine persistenti, non aggressive.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">♻️</div>
+      <div class="feat-title">Lattina 100% riciclata</div>
+      <div class="feat-desc">Il packaging è prodotto con alluminio riciclato al 100%. Zero compromessi.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GUSTI -->
+<section class="flavors" id="flavors">
+  <p class="section-label">Gusti</p>
+  <h2 class="section-title">Scegli la tua scarica.</h2>
+  <div class="flavor-grid">
+    <div class="flavor-card reveal" style="background: linear-gradient(135deg, #1a1a0a, #2a2a10);">
+      <span class="flavor-emoji">🍋</span>
+      <div class="flavor-name">Limone & Zenzero</div>
+      <div class="flavor-sub">Originale</div>
+    </div>
+    <div class="flavor-card reveal" style="background: linear-gradient(135deg, #1a0a1a, #2a102a);">
+      <span class="flavor-emoji">🫐</span>
+      <div class="flavor-name">Mirtillo & Menta</div>
+      <div class="flavor-sub">Limited edition</div>
+    </div>
+    <div class="flavor-card reveal" style="background: linear-gradient(135deg, #1a0a0a, #2a1010);">
+      <span class="flavor-emoji">🍒</span>
+      <div class="flavor-name">Ciliegia Nera</div>
+      <div class="flavor-sub">Bestseller</div>
+    </div>
+    <div class="flavor-card reveal" style="background: linear-gradient(135deg, #0a1a0a, #102a10);">
+      <span class="flavor-emoji">🥝</span>
+      <div class="flavor-name">Kiwi & Lime</div>
+      <div class="flavor-sub">Nuovo</div>
+    </div>
+    <div class="flavor-card reveal" style="background: linear-gradient(135deg, #0a0a1a, #10102a);">
+      <span class="flavor-emoji">🍇</span>
+      <div class="flavor-name">Uva Nera</div>
+      <div class="flavor-sub">Dark edition</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <h2 class="reveal">Pronto a sentirti<br/><span style="color:var(--yellow)">elettrico?</span></h2>
+  <p class="reveal">Disponibile online e nei migliori store italiani.</p>
+  <button class="btn-primary reveal" style="font-size:1.1rem; padding: 1.1rem 2.5rem;">
+    Ordina una cassa →
+  </button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">VOLTA</div>
+  <div>© 2025 VOLTA Electric Drinks. Tutti i diritti riservati.</div>
+  <div>Made in Italy 🇮🇹</div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Counter animation
+const counters = document.querySelectorAll('.stat-num[data-target]');
+const countObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = +el.dataset.target;
+    let v = 0;
+    const step = Math.ceil(target / 40) || 1;
+    const t = setInterval(() => {
+      v = Math.min(v + step, target);
+      el.textContent = v + (el.parentElement.querySelector('.stat-lbl').textContent.includes('%') ? '%' : '');
+      if (v >= target) clearInterval(t);
+    }, 35);
+    countObserver.unobserve(el);
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => countObserver.observe(c));
+</script>
+</body>
+</html>
