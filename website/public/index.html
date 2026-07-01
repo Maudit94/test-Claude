@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Il Mio Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <nav class="navbar">
+      <span class="logo">Il Mio Nome</span>
+      <ul class="nav-links">
+        <li><a href="#about">Chi sono</a></li>
+        <li><a href="#projects">Progetti</a></li>
+        <li><a href="#contact">Contatti</a></li>
+      </ul>
+    </nav>
+    <div class="hero-content">
+      <h1>Ciao, sono <span>il tuo nome</span></h1>
+      <p>Sviluppatore/Designer — costruisco cose sul web.</p>
+      <a href="#contact" class="btn">Contattami</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="about" class="section">
+      <h2>Chi sono</h2>
+      <p>
+        Scrivi qui una breve presentazione: chi sei, cosa fai e cosa ti appassiona.
+        Questo testo è statico e puoi modificarlo direttamente in
+        <code>public/index.html</code>.
+      </p>
+    </section>
+
+    <section id="projects" class="section">
+      <h2>Progetti</h2>
+      <div id="projects-list" class="projects-grid">
+        <p class="loading">Caricamento progetti...</p>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <h2>Contattami</h2>
+      <form id="contact-form" class="contact-form" novalidate>
+        <label for="name">Nome</label>
+        <input type="text" id="name" name="name" required maxlength="200" />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required maxlength="200" />
+
+        <label for="message">Messaggio</label>
+        <textarea id="message" name="message" rows="5" required maxlength="5000"></textarea>
+
+        <button type="submit">Invia</button>
+        <p id="form-status" class="form-status" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Il Mio Nome. Tutti i diritti riservati.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
