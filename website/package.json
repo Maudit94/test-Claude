@@ -1,0 +1,14 @@
+{
+  "name": "mio-sito-portfolio",
+  "version": "1.0.0",
+  "description": "Piccolo sito portfolio con backend Node.js + Express e database SQLite",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2"
+  }
+}
