@@ -77,5 +77,28 @@ function initContactForm() {
   });
 }
 
+async function loadSettings() {
+  try {
+    const res = await fetch('/api/settings');
+    if (!res.ok) throw new Error('Errore nel caricamento delle impostazioni');
+    const settings = await res.json();
+
+    if (settings.site_name) {
+      document.getElementById('site-name').textContent = settings.site_name;
+      document.getElementById('nav-logo').textContent = settings.site_name;
+      document.title = settings.site_name;
+    }
+    if (settings.tagline) {
+      document.getElementById('tagline').textContent = settings.tagline;
+    }
+    if (settings.bio) {
+      document.getElementById('bio-text').textContent = settings.bio;
+    }
+  } catch (err) {
+    // mantiene i valori di default già presenti nell'HTML
+  }
+}
+
+loadSettings();
 loadProjects();
 initContactForm();

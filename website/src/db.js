@@ -22,6 +22,11 @@ db.exec(`
     message TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
 `);
 
 const projectCount = db.prepare('SELECT COUNT(*) AS count FROM projects').get();
@@ -38,6 +43,20 @@ if (projectCount.count === 0) {
     for (const row of rows) insert.run(...row);
   });
   insertMany(seedProjects);
+}
+
+const settingsCount = db.prepare('SELECT COUNT(*) AS count FROM settings').get();
+if (settingsCount.count === 0) {
+  const insertSetting = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)');
+  const seedSettings = [
+    ['site_name', 'il tuo nome'],
+    ['tagline', 'Sviluppatore/Designer — costruisco cose sul web.'],
+    ['bio', 'Scrivi qui una breve presentazione: chi sei, cosa fai e cosa ti appassiona.'],
+  ];
+  const insertManySettings = db.transaction((rows) => {
+    for (const row of rows) insertSetting.run(...row);
+  });
+  insertManySettings(seedSettings);
 }
 
 module.exports = db;

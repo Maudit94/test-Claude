@@ -9,7 +9,7 @@
 <body>
   <header class="hero">
     <nav class="navbar">
-      <span class="logo">Il Mio Nome</span>
+      <span class="logo" id="nav-logo">Il Mio Nome</span>
       <ul class="nav-links">
         <li><a href="#about">Chi sono</a></li>
         <li><a href="#projects">Progetti</a></li>
@@ -17,8 +17,8 @@
       </ul>
     </nav>
     <div class="hero-content">
-      <h1>Ciao, sono <span>il tuo nome</span></h1>
-      <p>Sviluppatore/Designer — costruisco cose sul web.</p>
+      <h1>Ciao, sono <span id="site-name">il tuo nome</span></h1>
+      <p id="tagline">Sviluppatore/Designer — costruisco cose sul web.</p>
       <a href="#contact" class="btn">Contattami</a>
     </div>
   </header>
@@ -26,10 +26,8 @@
   <main>
     <section id="about" class="section">
       <h2>Chi sono</h2>
-      <p>
+      <p id="bio-text">
         Scrivi qui una breve presentazione: chi sei, cosa fai e cosa ti appassiona.
-        Questo testo è statico e puoi modificarlo direttamente in
-        <code>public/index.html</code>.
       </p>
     </section>
 

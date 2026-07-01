@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pannello di amministrazione</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem 4rem;
+      background: #0f1115;
+      color: #eef0f4;
+    }
+    h1 { margin-bottom: 0.25rem; }
+    h2 { margin-top: 2.5rem; border-left: 4px solid #6c8cff; padding-left: 0.5rem; }
+    h3 { margin-top: 1.5rem; }
+    section { margin-bottom: 2rem; }
+    label { display: block; margin-top: 0.75rem; font-size: 0.9rem; color: #9aa1ae; }
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      background: #161923;
+      border: 1px solid #232838;
+      border-radius: 6px;
+      color: #eef0f4;
+      font-family: inherit;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 0.75rem;
+      padding: 0.5rem 1.25rem;
+      background: #6c8cff;
+      border: none;
+      border-radius: 6px;
+      color: #0b0d12;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.secondary { background: transparent; border: 1px solid #6c8cff; color: #6c8cff; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #232838; vertical-align: top; }
+    .status { font-size: 0.9rem; min-height: 1.2rem; margin-top: 0.5rem; }
+    .status.success { color: #6cff9a; }
+    .status.error { color: #ff6c6c; }
+    .project-card {
+      border: 1px solid #232838;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .project-card .actions { display: flex; gap: 0.5rem; align-items: center; }
+    .empty { color: #9aa1ae; }
+  </style>
+</head>
+<body>
+  <h1>Pannello di amministrazione</h1>
+  <p class="empty">Da qui puoi modificare i testi del sito, i progetti e vedere i messaggi ricevuti.</p>
+
+  <section id="settings-section">
+    <h2>Impostazioni del sito</h2>
+    <form id="settings-form">
+      <label for="site_name">Il tuo nome</label>
+      <input type="text" id="site_name" name="site_name" maxlength="200" />
+
+      <label for="tagline">Frase sotto il nome</label>
+      <input type="text" id="tagline" name="tagline" maxlength="300" />
+
+      <label for="bio">Testo "Chi sono"</label>
+      <textarea id="bio" name="bio" rows="4" maxlength="5000"></textarea>
+
+      <button type="submit">Salva impostazioni</button>
+      <p id="settings-status" class="status"></p>
+    </form>
+  </section>
+
+  <section id="projects-section">
+    <h2>Progetti</h2>
+    <div id="projects-list"></div>
+
+    <h3>Aggiungi nuovo progetto</h3>
+    <form id="new-project-form">
+      <label for="new-title">Titolo</label>
+      <input type="text" id="new-title" name="title" maxlength="200" required />
+
+      <label for="new-description">Descrizione</label>
+      <textarea id="new-description" name="description" rows="3" maxlength="2000" required></textarea>
+
+      <label for="new-link">Link (opzionale)</label>
+      <input type="url" id="new-link" name="link" maxlength="500" />
+
+      <button type="submit">Aggiungi progetto</button>
+      <p id="new-project-status" class="status"></p>
+    </form>
+  </section>
+
+  <section id="messages-section">
+    <h2>Messaggi ricevuti</h2>
+    <div id="messages-list"></div>
+  </section>
+
+  <script>
+    async function api(path, options = {}) {
+      const res = await fetch('/api/admin' + path, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Errore imprevisto.');
+      return data;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str ?? '';
+      return div.innerHTML;
+    }
+
+    async function loadSettings() {
+      const settings = await api('/settings');
+      document.getElementById('site_name').value = settings.site_name || '';
+      document.getElementById('tagline').value = settings.tagline || '';
+      document.getElementById('bio').value = settings.bio || '';
+    }
+
+    document.getElementById('settings-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = document.getElementById('settings-status');
+      status.textContent = '';
+      status.className = 'status';
+      try {
+        await api('/settings', {
+          method: 'PUT',
+          body: JSON.stringify({
+            site_name: document.getElementById('site_name').value.trim(),
+            tagline: document.getElementById('tagline').value.trim(),
+            bio: document.getElementById('bio').value.trim(),
+          }),
+        });
+        status.textContent = 'Impostazioni salvate.';
+        status.classList.add('success');
+      } catch (err) {
+        status.textContent = err.message;
+        status.classList.add('error');
+      }
+    });
+
+    async function loadProjects() {
+      const projects = await api('/projects');
+      const container = document.getElementById('projects-list');
+
+      if (projects.length === 0) {
+        container.innerHTML = '<p class="empty">Nessun progetto ancora.</p>';
+        return;
+      }
+
+      container.innerHTML = projects
+        .map(
+          (p) => `
+          <form class="project-card" data-id="${p.id}">
+            <label>Titolo</label>
+            <input type="text" name="title" value="${escapeHtml(p.title)}" maxlength="200" required />
+            <label>Descrizione</label>
+            <textarea name="description" rows="2" maxlength="2000" required>${escapeHtml(p.description)}</textarea>
+            <label>Link</label>
+            <input type="url" name="link" value="${escapeHtml(p.link || '')}" maxlength="500" />
+            <div class="actions">
+              <button type="submit">Salva</button>
+              <button type="button" class="secondary delete-btn">Elimina</button>
+              <span class="status"></span>
+            </div>
+          </form>
+        `
+        )
+        .join('');
+
+      container.querySelectorAll('.project-card').forEach((form) => {
+        const id = form.dataset.id;
+        const status = form.querySelector('.status');
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          status.textContent = '';
+          status.className = 'status';
+          try {
+            await api(`/projects/${id}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                title: form.title.value.trim(),
+                description: form.description.value.trim(),
+                link: form.link.value.trim(),
+              }),
+            });
+            status.textContent = 'Salvato.';
+            status.classList.add('success');
+          } catch (err) {
+            status.textContent = err.message;
+            status.classList.add('error');
+          }
+        });
+
+        form.querySelector('.delete-btn').addEventListener('click', async () => {
+          if (!confirm('Eliminare questo progetto?')) return;
+          try {
+            await api(`/projects/${id}`, { method: 'DELETE' });
+            loadProjects();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    }
+
+    document.getElementById('new-project-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = document.getElementById('new-project-status');
+      status.textContent = '';
+      status.className = 'status';
+      const form = event.target;
+      try {
+        await api('/projects', {
+          method: 'POST',
+          body: JSON.stringify({
+            title: form.title.value.trim(),
+            description: form.description.value.trim(),
+            link: form.link.value.trim(),
+          }),
+        });
+        status.textContent = 'Progetto aggiunto.';
+        status.classList.add('success');
+        form.reset();
+        loadProjects();
+      } catch (err) {
+        status.textContent = err.message;
+        status.classList.add('error');
+      }
+    });
+
+    async function loadMessages() {
+      const messages = await api('/messages');
+      const container = document.getElementById('messages-list');
+
+      if (messages.length === 0) {
+        container.innerHTML = '<p class="empty">Nessun messaggio ricevuto.</p>';
+        return;
+      }
+
+      container.innerHTML = `
+        <table>
+          <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Messaggio</th><th></th></tr></thead>
+          <tbody>
+            ${messages
+              .map(
+                (m) => `
+              <tr data-id="${m.id}">
+                <td>${escapeHtml(m.created_at)}</td>
+                <td>${escapeHtml(m.name)}</td>
+                <td>${escapeHtml(m.email)}</td>
+                <td>${escapeHtml(m.message)}</td>
+                <td><button type="button" class="secondary delete-message-btn">Elimina</button></td>
+              </tr>
+            `
+              )
+              .join('')}
+          </tbody>
+        </table>
+      `;
+
+      container.querySelectorAll('.delete-message-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const row = btn.closest('tr');
+          const id = row.dataset.id;
+          if (!confirm('Eliminare questo messaggio?')) return;
+          try {
+            await api(`/messages/${id}`, { method: 'DELETE' });
+            loadMessages();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    }
+
+    loadSettings();
+    loadProjects();
+    loadMessages();
+  </script>
+</body>
+</html>
